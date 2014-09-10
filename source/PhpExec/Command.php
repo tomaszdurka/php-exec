@@ -53,14 +53,36 @@ class Command {
         }
         fclose($pipes[0]);
 
-        $stdout = stream_get_contents($pipes[1]);
-        fclose($pipes[1]);
+        $stdout = null;
+        $stderr = null;
+        $processStatus = null;
+        do {
+            $readPipes = [$pipes[1], $pipes[2]];
+            $writePipes = [];
+            $exceptPipes = [];
+            stream_select($readPipes, $writePipes, $exceptPipes, null);
 
-        $stderr = stream_get_contents($pipes[2]);
+            foreach ($readPipes as $readPipe) {
+                $content = fread($readPipe, 4096);
+                $streamType = array_search($readPipe, $pipes);
+                switch ($streamType) {
+                    case 1:
+                        $stdout .= $content;
+                        $this->_eventEmitter->emit('stdout', [$content]);
+                        break;
+                    case 2:
+                        $stderr .= $content;
+                        $this->_eventEmitter->emit('stderr', [$content]);
+                        break;
+                }
+            }
+            $processStatus = proc_get_status($process);
+        } while ($processStatus['running']);
+
+        fclose($pipes[1]);
         fclose($pipes[2]);
 
-        $returnStatus = proc_close($process);
-        return new Result($this, $returnStatus, $stdout, $stderr);
+        return new Result($this, $processStatus['exitcode'], $stdout, $stderr);
     }
 
     /**
