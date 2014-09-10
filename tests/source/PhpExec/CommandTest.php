@@ -23,7 +23,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testCommandRunIntervalOutput() {
-        $command = new Command('bash', ['-c', 'echo -n foo; sleep 1; echo -n bar;']);
+        $command = new Command('bash', ['-c', 'echo -n foo; sleep 1; echo -n err 1>&2; echo -n bar;']);
         $eventTriggerCount = 0;
         $command->on('stdout', function ($output) use (&$eventTriggerCount) {
             $eventTriggerCount++;
@@ -34,7 +34,12 @@ class CommandTest extends \PHPUnit_Framework_TestCase {
                 $this->assertSame('bar', $output);
             }
         });
+        $command->on('stderr', function ($output) {
+            $this->assertSame('err', $output);
+        });
         $result = $command->run();
         $this->assertTrue($result->isSuccess());
+        $this->assertSame('foobar', $result->getOutput());
+        $this->assertSame('err', $result->getErrorOutput());
     }
 }
