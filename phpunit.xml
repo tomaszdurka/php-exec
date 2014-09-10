@@ -1,0 +1,7 @@
+<phpunit bootstrap="tests/bootstrap.php">
+	<testsuites>
+		<testsuite name="PhpExec">
+			<directory>tests/source/</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>
