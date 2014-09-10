@@ -8,15 +8,17 @@ class CommandTest extends \PHPUnit_Framework_TestCase {
 
     public function testCommandRunSuccess() {
         $command = new Command('ls');
-        $this->assertSame("CommandTest.php\n", $command->run());
+        $result = $command->run();
+        $this->assertTrue($result->isSuccess());
+        $this->assertSame("CommandTest.php\n", $result->getOutput());
+        $this->assertSame('', $result->getErrorOutput());
     }
 
-    /**
-     * @expectedException \PhpExec\Exception
-     * @expectedExceptionMessage Command `unknown-command` failed
-     */
     public function testCommandRunCommandNotFound() {
         $command = new Command('unknown-command');
-        $command->run();
+        $result = $command->run();
+        $this->assertFalse($result->isSuccess());
+        $this->assertSame('', $result->getOutput());
+        $this->assertSame("sh: unknown-command: command not found\n", $result->getErrorOutput());
     }
 }

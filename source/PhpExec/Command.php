@@ -35,21 +35,8 @@ class Command {
 
     /**
      * @param string|null $input
-     * @return bool
-     */
-    public function runSafe($input = null) {
-        try {
-            $this->run($input);
-            return true;
-        } catch (Exception $e) {
-            return false;
-        }
-    }
-
-    /**
-     * @param string|null $input
      * @throws Exception
-     * @return string
+     * @return Result
      */
     public function run($input = null) {
         $command = $this->_getCommand();
@@ -73,10 +60,7 @@ class Command {
         fclose($pipes[2]);
 
         $returnStatus = proc_close($process);
-        if (0 !== $returnStatus) {
-            throw new Exception('Command `' . $command . '` failed. STDERR: `' . trim($stderr) . '` STDOUT: `' . trim($stdout) . '`.');
-        }
-        return $stdout;
+        return new Result($this, $returnStatus, $stdout, $stderr);
     }
 
     /**
