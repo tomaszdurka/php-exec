@@ -35,13 +35,6 @@ class Result {
     }
 
     /**
-     * @return bool
-     */
-    public function isSuccess() {
-        return 0 === $this->_exitCode;
-    }
-
-    /**
      * @return string
      */
     public function getOutput() {
@@ -53,5 +46,19 @@ class Result {
      */
     public function getErrorOutput() {
         return $this->_error;
+    }
+
+    /**
+     * @return int
+     */
+    public function getExitCode() {
+        return $this->_exitCode;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSuccess() {
+        return 0 === $this->getExitCode();
     }
 }

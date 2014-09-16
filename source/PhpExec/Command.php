@@ -43,11 +43,12 @@ class Command {
         $descriptorSpec = [
             0 => ["pipe", "r"], 1 => ["pipe", "w"], 2 => ["pipe", "w"]
         ];
+
         $process = proc_open($command, $descriptorSpec, $pipes);
+        $this->_eventEmitter->emit('start');
         if (!is_resource($process)) {
             throw new Exception('Cannot open command file pointer to `' . $command . '`');
         }
-
         if (null !== $input) {
             fwrite($pipes[0], (string) $input);
         }
@@ -82,7 +83,9 @@ class Command {
         fclose($pipes[1]);
         fclose($pipes[2]);
 
-        return new Result($this, $processStatus['exitcode'], $stdout, $stderr);
+        $exitCode = $processStatus['exitcode'];
+        $this->_eventEmitter->emit('stop', [$exitCode]);
+        return new Result($this, $exitCode, $stdout, $stderr);
     }
 
     /**
