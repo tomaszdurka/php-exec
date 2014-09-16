@@ -45,10 +45,12 @@ class Command {
         ];
 
         $process = proc_open($command, $descriptorSpec, $pipes);
-        $this->_eventEmitter->emit('start');
         if (!is_resource($process)) {
             throw new Exception('Cannot open command file pointer to `' . $command . '`');
         }
+        $processStatus = proc_get_status($process);
+        $this->_eventEmitter->emit('start', [$processStatus['pid']]);
+
         if (null !== $input) {
             fwrite($pipes[0], (string) $input);
         }
@@ -56,7 +58,6 @@ class Command {
 
         $stdout = null;
         $stderr = null;
-        $processStatus = null;
         do {
             $readPipes = [$pipes[1], $pipes[2]];
             $writePipes = [];
