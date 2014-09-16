@@ -6,8 +6,10 @@ Super-simple library for executing shell commands in php.
 
 Use composer:
 ```json
-"require": {
-  "tomaszdurka/php-exec": "~0.1.0"
+{
+  "require": {
+    "tomaszdurka/php-exec": "~0.1.0"
+  }
 }
 ```
 
@@ -29,13 +31,13 @@ All possible events are listed in example:
 ```php
 $command = new Command('ls');
 $command->on('start', function($pid) {
-}
+});
 $command->on('stdout', function($output) {
-}
+});
 $command->on('stderr', function($error) {
-}
+});
 $command->on('stop', function($exitCode) {
-}
-$result = $command->run();
+});
+$command->run();
 ```
 
