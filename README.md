@@ -26,8 +26,8 @@ $result->getErrorOutput();
 ```
 
 ## Events
-Apart from basic usages you can listen for Command events to intercept specific events.
-All possible events are listed in example:
+Apart from basic usage you can listen to intercept specific Command events.
+All possible events are listed in example below:
 ```php
 $command = new Command('ls');
 $command->on('start', function($pid) {
