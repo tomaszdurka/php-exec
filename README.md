@@ -1,6 +1,7 @@
 ### PhpExec
 
 Super-simple library for executing shell commands in php.
+I have created it without knowledge of already mature (fulfiling my needs) library https://github.com/symfony/Process  
 
 ## Installation
 
